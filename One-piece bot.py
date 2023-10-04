@@ -57,26 +57,28 @@ class botGuiApp:
                 self.pathBox.delete(0, tk.END)  # Clear the input box
                 self.pathBox.insert(0, dirname)
         
-        #download episodes 
+        #download episodes function
         def start_download(self):
             folder=self.pathBox.get()
-            print("this is the folder:" + folder)
             fro=int(self.e.get())
             to=int(self.e2.get())
             temp_url="https://animeisrael.website/watch/fulllink/op/fulllinkop-*.php"
             for i in range (fro,to+1):
                 url=temp_url
-                url=url.replace('*',str(i))                
+                url=url.replace('*',str(i)) 
+                #fetch the episode page HTML
                 try:
                     response = urllib.request.urlopen(url)
                     page_content=response.read()
                     soup=BeautifulSoup(page_content,'html.parser')
+                    #find the iframe element for video URL
                     iframe=soup.find('iframe')
                     if iframe:
                         video_url=iframe['src']
                         video_response=urllib.request.urlopen(video_url)
                         output=folder+'/'+'episode-'+str(i)+'.mp4'
                         video_url =video_url.replace('preview', 'view')
+                        #download the episode video
                         gdown.download(url=video_url, output=output, quiet=False, fuzzy=True,use_cookies=False)
                     else:
                         print('iframe element doesn"t exist')
